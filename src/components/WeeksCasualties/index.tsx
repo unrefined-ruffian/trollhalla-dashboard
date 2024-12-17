@@ -42,45 +42,32 @@ interface WeeksCasualtiesProps {
   };
 }
 
-function generateMatchupCommentary(
-  winner: string,
-  loser: string,
-  winnerScore: number,
-  loserScore: number,
-  inProgress: boolean
-): string {
-  const scoreDiff = Math.abs(winnerScore - loserScore);
-  
-  // In progress games
-  if (inProgress) {
-    if (scoreDiff > 50) {
-      return `${winner} is treating ${loser} like a bat treats the windshield of a fast-moving vehicle. Pure, unhinged destruction.`;
-    } else if (scoreDiff > 30) {
-      return `${winner} holds a lead that would make a Vegas bookie nervous, while ${loser} searches for answers in all the wrong places.`;
-    } else if (scoreDiff > 15) {
-      return `${winner} maintains a decent lead, but ${loser} still has a few tricks left in their medicine bag.`;
-    } else {
-      return `${winner} and ${loser} are locked in the kind of struggle that makes you question the fabric of reality itself.`;
-    }
+async function generateAICommentary(matchData: {
+  winner: string;
+  loser: string;
+  winnerScore: number;
+  loserScore: number;
+  inProgress: boolean;
+  yetToPlay: {
+    winner: number;
+    loser: number;
+  };
+}) {
+  try {
+    const response = await fetch('/api/generate-commentary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(matchData),
+    });
+    
+    const data = await response.json();
+    return data.commentary || 'The chaos continues...';
+  } catch (error) {
+    console.error('Error fetching AI commentary:', error);
+    return `${matchData.winner} ${matchData.inProgress ? 'leads' : 'defeated'} ${matchData.loser} in a game that defies description.`;
   }
-
-  // Completed games
-  if (scoreDiff > 50) {
-    return `${winner} laid waste to ${loser} with the kind of ruthless efficiency that would make a carpet bomber proud. A pure show of force that will echo through the halls of infamy.`;
-  }
-  if (scoreDiff > 40) {
-    return `${winner} treated ${loser} like a motorcycle gang treats a small-town bar. Complete and utter domination with a side of existential crisis.`;
-  }
-  if (scoreDiff > 30) {
-    return `${winner} dismantled ${loser} with surgical precision, if the surgeon was hopped up on ether and armed with a chainsaw.`;
-  }
-  if (scoreDiff > 20) {
-    return `${winner} emerged victorious in a contest that made ${loser} question their life choices and fantasy football acumen.`;
-  }
-  if (scoreDiff > 10) {
-    return `${winner} stumbled into a win against ${loser} like a drunk finding their car keys in a dark parking lot - not pretty, but effective.`;
-  }
-  return `${winner} barely escaped with a win over ${loser} in the kind of nail-biter that sends commissioners reaching for the hard stuff.`;
 }
 
 export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
@@ -88,14 +75,14 @@ export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    function processScores() {
+    async function processScores() {
       if (data?.games) {
-        const formattedMatchups = data.games
+        const formattedMatchups = await Promise.all(data.games
           .filter((game) => 
             game.homeScore?.score?.formatted !== undefined && 
             game.awayScore?.score?.formatted !== undefined
           )
-          .map((game) => {
+          .map(async (game) => {
             const homeScore = parseFloat(game.homeScore.score.formatted);
             const awayScore = parseFloat(game.awayScore.score.formatted);
             const isHomeWinner = homeScore > awayScore;
@@ -107,22 +94,22 @@ export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
               loser: isHomeWinner ? game.awayScore.yetToPlay : game.homeScore.yetToPlay
             };
 
-            return {
+            const matchData = {
               winner: isHomeWinner ? homeTeam : awayTeam,
               winnerScore: isHomeWinner ? homeScore : awayScore,
               loser: isHomeWinner ? awayTeam : homeTeam,
               loserScore: isHomeWinner ? awayScore : homeScore,
-              comment: generateMatchupCommentary(
-                isHomeWinner ? homeTeam : awayTeam,
-                isHomeWinner ? awayTeam : homeTeam,
-                isHomeWinner ? homeScore : awayScore,
-                isHomeWinner ? awayScore : homeScore,
-                game.isInProgress
-              ),
               inProgress: game.isInProgress,
               yetToPlay
             };
-          });
+
+            const comment = await generateAICommentary(matchData);
+
+            return {
+              ...matchData,
+              comment
+            };
+          }));
         setMatchups(formattedMatchups);
       }
       setLoading(false);
