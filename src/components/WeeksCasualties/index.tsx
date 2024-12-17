@@ -170,7 +170,7 @@ export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
               </div>
             </div>
             
-            <p className="text-gray-400 italic text-sm">
+            <p className="text-gray-100 italic text-sm">
               {match.comment}
             </p>
           </div>
