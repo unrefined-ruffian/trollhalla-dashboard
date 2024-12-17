@@ -47,8 +47,7 @@ function generateMatchupCommentary(
   loser: string,
   winnerScore: number,
   loserScore: number,
-  inProgress: boolean,
-  yetToPlay: { winner: number; loser: number }
+  inProgress: boolean
 ): string {
   const scoreDiff = Math.abs(winnerScore - loserScore);
   
@@ -118,8 +117,7 @@ export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
                 isHomeWinner ? awayTeam : homeTeam,
                 isHomeWinner ? homeScore : awayScore,
                 isHomeWinner ? awayScore : homeScore,
-                game.isInProgress,
-                yetToPlay
+                game.isInProgress
               ),
               inProgress: game.isInProgress,
               yetToPlay
@@ -136,7 +134,7 @@ export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
   if (loading) {
     return (
       <div className="bg-slate-900 p-8">
-        <h2 className="text-2xl font-bold text-purple-400 mb-6">THE WEEK'S CASUALTIES</h2>
+        <h2 className="text-2xl font-bold text-purple-400 mb-6">THE WEEK&apos;S CASUALTIES</h2>
         <p className="text-gray-400">Loading the carnage report...</p>
       </div>
     );
@@ -144,7 +142,7 @@ export default function WeeksCasualties({ data }: WeeksCasualtiesProps) {
 
   return (
     <div className="bg-slate-900 p-8">
-      <h2 className="text-2xl font-bold text-purple-400 mb-6">THE WEEK'S CASUALTIES</h2>
+      <h2 className="text-2xl font-bold text-purple-400 mb-6">THE WEEK&apos;S CASUALTIES</h2>
       
       <div className="space-y-4">
         {matchups.map((match, index) => (

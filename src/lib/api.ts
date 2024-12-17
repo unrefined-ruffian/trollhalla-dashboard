@@ -1,21 +1,66 @@
 export const LEAGUE_ID = 91436;
 export const BASE_URL = "https://www.fleaflicker.com/api";
 
+// Define more specific interfaces for the data structures
+interface Team {
+  id: number;
+  name: string;
+  recordOverall: {
+    wins: number;
+    losses: number;
+  };
+  pointsFor: {
+    value: number;
+  };
+  streak: {
+    value: number;
+  };
+}
+
+interface Division {
+  id: number;
+  name: string;
+  teams: Team[];
+}
+
 export interface LeagueStandings {
-  divisions: any[];
-  teams: any[];
+  divisions: Division[];
+  teams: Team[];
   league: {
     id: number;
     name: string;
   };
 }
 
+interface Score {
+  score: {
+    value: number;
+    formatted: string;
+  };
+  yetToPlay: number;
+}
+
 export interface Scoreboard {
   games: Array<{
-    home: { name: string; id: number };
-    away: { name: string; id: number };
-    homeScore: number;
-    awayScore: number;
+    home: { 
+      name: string; 
+      id: number;
+      recordOverall: {
+        wins: number;
+        losses: number;
+      };
+    };
+    away: { 
+      name: string; 
+      id: number;
+      recordOverall: {
+        wins: number;
+        losses: number;
+      };
+    };
+    homeScore: Score;
+    awayScore: Score;
+    isInProgress: boolean;
   }>;
 }
 

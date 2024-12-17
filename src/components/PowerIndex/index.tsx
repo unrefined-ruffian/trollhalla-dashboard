@@ -103,7 +103,8 @@ interface PowerRankingTeam {
   streak: number;
 }
 
-function calculatePlayoffOdds(rank: number, totalTeams: number): number {
+// Change this function
+function calculatePlayoffOdds(rank: number): number {  // removed unused totalTeams parameter
   const playoffSpots = 6;
   if (rank <= playoffSpots) {
     return Math.round(100 - ((rank - 1) * 15));
@@ -139,7 +140,8 @@ export default function PowerIndex() {
       const formattedRankings = sortedTeams.map((team, index) => {
         const rank = index + 1;
         const rankContent = POWER_RANK_CONTENT[rank as keyof typeof POWER_RANK_CONTENT];
-        const odds = calculatePlayoffOdds(rank, teams.length);
+        // In the formattedRankings calculation
+const odds = calculatePlayoffOdds(rank);  // removed teams.length argument
 
         return {
           rank,

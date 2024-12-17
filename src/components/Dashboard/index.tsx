@@ -4,7 +4,7 @@ import WeeksCasualties from '@/components/WeeksCasualties';
 import HallOfInfamy from '@/components/HallOfInfamy';
 import PowerIndex from '@/components/PowerIndex';
 
-// Interface for WeeksCasualties
+// Interface for Game (consolidated duplicate definitions)
 interface Game {
   home: {
     name: string;
@@ -35,47 +35,6 @@ interface Game {
     yetToPlay: number;
   };
   isInProgress: boolean;
-}
-
-interface ScoreboardData {
-  games: Game[];
-}
-
-// Interfaces for HallOfInfamy
-interface Game {
-  home: {
-    name: string;
-    recordOverall: {
-      wins: number;
-      losses: number;
-    };
-  };
-  away: {
-    name: string;
-    recordOverall: {
-      wins: number;
-      losses: number;
-    };
-  };
-  homeScore: {
-    score: {
-      value: number;
-      formatted: string;
-    };
-    yetToPlay: number;
-  };
-  awayScore: {
-    score: {
-      value: number;
-      formatted: string;
-    };
-    yetToPlay: number;
-  };
-  isInProgress: boolean;
-}
-
-interface ScoreboardData {
-  games: Game[];
 }
 
 interface ScoreboardData {
@@ -110,8 +69,12 @@ interface PowerIndexData {
 export default function GonzoDashboard() {
   const { data: scoreboardData, loading: scoreboardLoading, error: scoreboardError } = 
     useFleaflicker('scoreboard') as { data: ScoreboardData | null, loading: boolean, error: Error | null };
-  const { data: powerData, loading: powerLoading, error: powerError } = 
+
+  // Remove 'data' since we're not using it from standings
+  const { loading: powerLoading, error: powerError } = 
     useFleaflicker('standings') as { data: PowerIndexData | null, loading: boolean, error: Error | null };
+
+  // Rest of the code stays the same
 
   if (scoreboardLoading || powerLoading) {
     return (
@@ -141,7 +104,7 @@ export default function GonzoDashboard() {
             Fear & Loathing in Fantasy Football
           </h1>
           <p className="text-lg italic text-purple-300 mb-8 border-b border-purple-700 pb-4">
-            "We were somewhere around the playoff bubble, on the edge of vicotry, when the drugs began to take hold..."
+            &quot;We were somewhere around the playoff bubble, on the edge of vicotry, when the drugs began to take hold...&quot;
           </p>
         </header>
 

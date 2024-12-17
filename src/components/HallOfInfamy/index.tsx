@@ -56,8 +56,10 @@ interface HallOfInfamyProps {
 }
 
 export default function HallOfInfamy({ data }: HallOfInfamyProps) {
-  const [matchupData, setMatchupData] = useState<MatchupData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+// Change this line:
+const [matchupData, setMatchupData] = useState<MatchupData | null>(null);
+// We removed the error state since it wasn't being used
+
 
   useEffect(() => {
     async function processScoreboard() {
@@ -66,7 +68,6 @@ export default function HallOfInfamy({ data }: HallOfInfamyProps) {
 
         if (!data?.games) {
           console.log('No games found in scoreboard');
-          setError('No games data available');
           return;
         }
 
@@ -174,42 +175,39 @@ export default function HallOfInfamy({ data }: HallOfInfamyProps) {
         lowestScore
       });
 
-    } catch (error) {
-      console.error('Error in processScoreboard:', error);
-      setError('Failed to process scoreboard data');
+    } catch (err) {
+      console.error('Error in processScoreboard:', err);
     }
   }
 
   processScoreboard();
 }, [data]);
 
-  if (!matchupData) {
-    return (
-      <div className="bg-gray-800 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold text-purple-400 mb-6">THE HALL OF INFAMY AND GLORY</h2>
-        <p className="text-gray-400">Calculating the damage...</p>
-      </div>
-    );
-  }
-
+if (!matchupData) {
   return (
     <div className="bg-gray-800 p-6 rounded-lg">
       <h2 className="text-2xl font-bold text-purple-400 mb-6">THE HALL OF INFAMY AND GLORY</h2>
-      
-      <div className="grid grid-cols-2 gap-4">
-        {/* Rest of the JSX remains the same */}
-        {/* The High Roller */}
-        <div className="bg-gray-700 p-4 rounded-lg col-span-2 md:col-span-1">
-          <div className="flex items-center gap-2 mb-2">
-            <Crown className="w-5 h-5 text-yellow-500" />
-            <h3 className="text-base font-bold text-yellow-500">THE HIGH ROLLER</h3>
-          </div>
-          <p className="text-xl font-bold text-gray-100">{matchupData.highScore.team}</p>
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-gray-400">{matchupData.highScore.score.toFixed(1)} points</span>
-            <span className="text-sm text-gray-500 italic">"When the going gets weird..."</span>
-          </div>
+      <p className="text-gray-400">Calculating the damage...</p>
+    </div>
+  );
+}
+
+return (
+  <div className="bg-gray-800 p-6 rounded-lg">
+    <h2 className="text-2xl font-bold text-purple-400 mb-6">THE HALL OF INFAMY AND GLORY</h2>
+    
+    <div className="grid grid-cols-2 gap-4">
+      <div className="bg-gray-700 p-4 rounded-lg col-span-2 md:col-span-1">
+        <div className="flex items-center gap-2 mb-2">
+          <Crown className="w-5 h-5 text-yellow-500" />
+          <h3 className="text-base font-bold text-yellow-500">THE HIGH ROLLER</h3>
         </div>
+        <p className="text-xl font-bold text-gray-100">{matchupData.highScore.team}</p>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-gray-400">{matchupData.highScore.score.toFixed(1)} points</span>
+          <span className="text-sm text-gray-500 italic">&quot;When the going gets weird...&quot;</span>
+        </div>
+      </div>
 
         {/* The Vegas Line */}
         <div className="bg-gray-700 p-4 rounded-lg col-span-2 md:col-span-1">

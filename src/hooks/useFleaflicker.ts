@@ -28,10 +28,37 @@ interface Game {
   };
 }
 
-interface LeagueData {
-  standings?: any; // For standings endpoint
-  games?: Game[]; // For scoreboard endpoint
+// Add interfaces for standings data
+interface Team {
+  name: string;
+  recordOverall: {
+    wins: number;
+    losses: number;
+  };
+  pointsFor: {
+    value: number;
+  };
+  streak: {
+    value: number;
+  };
 }
+
+interface Division {
+  id: number;
+  name: string;
+  teams: Team[];
+}
+
+interface StandingsData {
+  divisions: Division[];
+}
+
+interface ScoreboardData {
+  games: Game[];
+}
+
+// Create a union type for the possible data shapes
+type LeagueData = StandingsData | ScoreboardData;
 
 export function useFleaflicker(endpoint: 'standings' | 'scoreboard' = 'standings') {
   const [data, setData] = useState<LeagueData | null>(null);
